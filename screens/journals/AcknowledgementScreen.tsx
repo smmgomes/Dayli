@@ -1,0 +1,1 @@
+//pop up screen saying thank you for submitting or we got your submittion for journal
