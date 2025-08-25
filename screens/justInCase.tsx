@@ -1,15 +1,14 @@
-import { MenuView } from '@react-native-menu/menu';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { useState } from 'react';
 import {
   Alert,
-  Appearance,
   Image,
   SafeAreaView,
   StyleSheet,
   Switch,
   Text,
   View,
+  useColorScheme
 } from 'react-native';
 import DateTimePickerModal from 'react-native-modal-datetime-picker';
 import Animated, {
@@ -21,14 +20,14 @@ import Animated, {
 import { ParameterList } from '../App';
 import { PlainAnimatedButton } from '../components/PlainAnimatedButton';
 import { TextButtonAnimation } from '../components/TextButtonAnimation';
-import { captialize } from '../library/helpers';
+import { Colors } from '../constants/Colors';
 
 type SettingsScreenProps = NativeStackScreenProps<ParameterList, 'Settings'>;
 
 const AniSafeView = Animated.createAnimatedComponent(SafeAreaView);
 
 const bellImg = require('../assets/images/notificationBell.png');
-const thmClrIcon = require('../assets/images/themeColorIcon.png');
+const darkmodeImg = require('../assets/images/darkMode.png');
 const userImg = require('../assets/images/userIcon.png');
 const supportImg = require('../assets/images/supportIcon.png');
 const arrowUpDown = require('../assets/images/arrow-up-down.png');
@@ -38,16 +37,10 @@ const greyArrowIcon = require('../assets/images/right-arrow-grey.png');
 export const SettingsScreen: React.FC<SettingsScreenProps> = ({
   navigation,
 }) => {
-  // states 
-  const [isNotificationEnabled, setIsNotificationEnabled] = useState(true);
-  const [isTimePickerVisible, setTimePickerVisibility] = useState(false);
-  const [selectedTime, setSelectedTime] = useState(new Date(2025, 7, 9, 13, 0));
-  const [userThemeChoice, setUserThemeChoice] = useState<{name: string, value: 'light' | 'dark'}>(
-    {name: 'system', value: Appearance.getColorScheme() ?? 'light'}
-  ); //set up global variable after
-  
 
-  //animation 
+  const colorScheme = useColorScheme() ?? 'light';
+  const theme = Colors[colorScheme] ?? Colors.light; 
+
   const opacitySV = useSharedValue(1);
   const opacityAnimationObject = useAnimatedStyle(() => {
     return {
@@ -55,7 +48,6 @@ export const SettingsScreen: React.FC<SettingsScreenProps> = ({
     };
   });
 
-  //navigation
   const navigateBACKtoMainPage = () => {
     navigation.navigate('MainPage', { name: 'temp' });
   };
@@ -64,11 +56,15 @@ export const SettingsScreen: React.FC<SettingsScreenProps> = ({
     navigation.navigate('Home');
   };
 
-  //notifications
+  const [isDarkMode, setIsDarkMode] = useState(false);
+  const toggleSwitchDarkMode = () =>
+    setIsDarkMode(previousState => !previousState);
+  const [isNotificationEnabled, setIsNotificationEnabled] = useState(true);
   const toggleSwitchNotification = () =>
     setIsNotificationEnabled(previousState => !previousState);
 
-  //selecting time
+  const [isTimePickerVisible, setTimePickerVisibility] = useState(false);
+  const [selectedTime, setSelectedTime] = useState(new Date(2025, 7, 9, 13, 0));
   const showTimePicker = () => {
     setTimePickerVisibility(true);
   };
@@ -84,14 +80,12 @@ export const SettingsScreen: React.FC<SettingsScreenProps> = ({
     return time.toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' });
   };
 
-  //contacting support
   const createSupportAlert = () => {
     Alert.alert('Email exmaple@email.com for support', undefined, [
       { text: 'OK' },
     ]);
   };
 
-  //deleting account
   const createDeleteAccountAlert = () => {
     Alert.alert('Are you sure you want to delete your account?', undefined, [
       { text: 'Cancel', style: 'cancel' },
@@ -99,10 +93,9 @@ export const SettingsScreen: React.FC<SettingsScreenProps> = ({
     ]);
   };
 
-  //logging out 
   const createLogOutAlert = () => {
     Alert.alert('Log out?', undefined, [
-      { text: 'Cancel', style: 'cancel' },
+      { text: 'Cancel', style: 'cancel'},
       {
         text: 'Yes',
         onPress: () =>
@@ -115,7 +108,7 @@ export const SettingsScreen: React.FC<SettingsScreenProps> = ({
   };
 
   return (
-    <View style={{ flex: 1, backgroundColor: '#eeeee8' }}>
+    <View style={{ flex: 1, backgroundColor: '#eeebe8' }}>
       <AniSafeView style={[opacityAnimationObject, styles.container]}>
         <PlainAnimatedButton
           style={styles.goBackBtnStyles}
@@ -130,52 +123,18 @@ export const SettingsScreen: React.FC<SettingsScreenProps> = ({
         </PlainAnimatedButton>
 
         <Text style={styles.title}>Settings</Text>
-
         <View style={[styles.subSectionView, styles.subSectionMargins]}>
           <View style={styles.switchTextIconStyles}>
-            <Image source={thmClrIcon} style={styles.iconStyles} />
-            <Text style={styles.subSectionFont}>Select Theme</Text>
+            <Image source={darkmodeImg} style={styles.iconStyles} />
+            <Text style={styles.subSectionFont}>Dark mode</Text>
           </View>
-          <MenuView
-            title="Select Theme"
-            onPressAction={({ nativeEvent }) => {
-              if (nativeEvent.event === 'system') {
-                setUserThemeChoice({name: 'system', value: Appearance.getColorScheme() ?? 'light'});
-              } else if (nativeEvent.event === 'light') {
-                setUserThemeChoice({name: 'light', value: 'light'});
-              } else {
-                setUserThemeChoice({ name: 'dark', value: 'dark' });
-              }
-            }}
-            actions={[
-              {
-                id: 'system',
-                title: 'System',
-                // titleColor: image:
-              },
-              {
-                id: 'light',
-                title: 'Light',
-                // titleColor: image:
-              },
-              {
-                id: 'dark',
-                title: 'Dark',
-                // titleColor: image:
-              },
-            ]}
-            themeVariant={userThemeChoice.value}
-          >
-            <PlainAnimatedButton
-              onPress={() => {}}
-              style={styles.pickerPressableStyle}
-            >
-              <Text style={styles.pickerTextStyle}>
-                {captialize(userThemeChoice.name)}
-              </Text>
-              <Image source={arrowUpDown} style={styles.upDownArrowIcon} />
-            </PlainAnimatedButton>
-          </MenuView>
+          <Switch
+            value={isDarkMode}
+            onValueChange={toggleSwitchDarkMode}
+            trackColor={{ false: '#dcd6cf', true: '#eb817a' }}
+            thumbColor={isDarkMode ? '#EEEBE8' : '#EEEBE8'}
+            style={styles.switchSize}
+          />
         </View>
 
         <View style={[styles.subSectionView, styles.subSectionMargins]}>
@@ -187,7 +146,7 @@ export const SettingsScreen: React.FC<SettingsScreenProps> = ({
             value={isNotificationEnabled}
             onValueChange={toggleSwitchNotification}
             trackColor={{ false: '#dcd6cf', true: '#eb817a' }}
-            thumbColor={isNotificationEnabled ? '#EEEBE8' : '#EEEBE8'}
+            thumbColor={isDarkMode ? '#EEEBE8' : '#EEEBE8'}
             style={styles.switchSize}
           />
         </View>
@@ -196,9 +155,9 @@ export const SettingsScreen: React.FC<SettingsScreenProps> = ({
           <Text style={styles.accountSubHeadingTextStyles}>Time</Text>
           <PlainAnimatedButton
             onPress={showTimePicker}
-            style={styles.pickerPressableStyle}
+            style={styles.timePickerPressableStyle}
           >
-            <Text style={styles.pickerTextStyle}>
+            <Text style={styles.timePickerTextStyle}>
               {formatTime(selectedTime)}
             </Text>
             <Image source={arrowUpDown} style={styles.upDownArrowIcon} />
@@ -212,8 +171,6 @@ export const SettingsScreen: React.FC<SettingsScreenProps> = ({
             onCancel={hideTimePicker}
             display="spinner"
             is24Hour={false}
-            accentColor='blue'
-            themeVariant={userThemeChoice.value}
           />
         </View>
 
@@ -377,13 +334,13 @@ const styles = StyleSheet.create({
     width: '73%',
     marginTop: -15,
   },
-  pickerPressableStyle: {
+  timePickerPressableStyle: {
     flexDirection: 'row',
+    width: '23%',
     justifyContent: 'space-between',
     alignItems: 'center',
-    gap: 10,
   },
-  pickerTextStyle: {
+  timePickerTextStyle: {
     color: '#d4756f',
     fontSize: 13,
     fontFamily: 'BiskiTrial-Regula',

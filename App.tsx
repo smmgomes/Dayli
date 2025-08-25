@@ -1,5 +1,7 @@
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import { useEffect } from 'react';
 import 'react-native-gesture-handler';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { PaperProvider } from 'react-native-paper';
@@ -20,6 +22,10 @@ export type ParameterList = {
 const Stack = createNativeStackNavigator<ParameterList>(); //this part is just to let your code editor know what prameter your App is expecting
 
 export const App = () => {
+  useEffect(() => {
+    console.log(AsyncStorage.getItem("name")); 
+    },[]
+  )
   return (
     <PaperProvider>
       <GestureHandlerRootView style={{ flex: 1 }}>
