@@ -1,5 +1,15 @@
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
-import { Image, SafeAreaView, StyleSheet, Text, View } from 'react-native';
+import {
+  GestureResponderEvent,
+  Image,
+  ImageSourcePropType,
+  SafeAreaView,
+  StyleProp,
+  StyleSheet,
+  Text,
+  View,
+  ViewStyle,
+} from 'react-native';
 import Animated, {
   runOnJS,
   useAnimatedStyle,
@@ -7,7 +17,11 @@ import Animated, {
   withTiming,
 } from 'react-native-reanimated';
 import { ParameterList } from '../App';
-import { PlainAnimatedButton } from '../components/PlainAnimatedButton';
+import {
+  FadedAnimationButton,
+  FadedAnimationButtonProps,
+} from '../components/FadedAnimationButton';
+import { ScreenHeader } from '../components/ScreenHeader';
 
 type MainPageProps = NativeStackScreenProps<ParameterList, 'MainPage'>;
 
@@ -16,7 +30,6 @@ const moodStatsIcon = require('../assets/images/emoji-smile.png');
 const moodAdvisorIcon = require('../assets/images/chat-heart.png');
 const settingsIcon = require('../assets/images/settings.png');
 const calendarIcon = require('../assets/images/calendar.png');
-const character = require('../assets/images/welcomePageCharacterIcon.png');
 const heart1 = require('../assets/images/heart1.png');
 const heart2 = require('../assets/images/heart2.png');
 const heart3 = require('../assets/images/heart3.png');
@@ -36,63 +49,70 @@ export const MainPageScreen: React.FC<MainPageProps> = ({ navigation }) => {
   };
   return (
     <View style={{ flex: 1, backgroundColor: '#eeebe8' }}>
-    <AniSafeView style={[styles.container, opacityAnimationObject]}>
-      <Text style={styles.title}>Hello Apida!</Text>
-      <View style={{ gap: 50 }}>
-        <View style={[styles.pairedButtonStyles, { marginTop: 50 }]}>
-          <PlainAnimatedButton style={[styles.btn, { width: 100 }]}>
-            <View>
-              <Image source={journalIcon} style={styles.btnImg} />
-              <Text style={styles.font}>Journal</Text>
-            </View>
-          </PlainAnimatedButton>
-          <PlainAnimatedButton style={[styles.btn, { width: 100 }]}>
-            <View>
-              <Image source={moodStatsIcon} style={styles.btnImg} />
-              <Text style={styles.font}>Mood Stats</Text>
-            </View>
-          </PlainAnimatedButton>
+      <AniSafeView style={[styles.container, opacityAnimationObject]}>
+
+        {/* Title */}
+        <ScreenHeader title="Hello Apida!" />
+
+        {/* All the buttons */}
+        <View style={{ gap: 50 }}>
+
+          {/* Row 1 */}
+          <View style={[styles.pairedButtonStyles, { marginTop: 50 }]}>
+            <NavButton
+              title="Journal"
+              icon={journalIcon}
+              btnStyle={{ width: 100 }}
+              onPress={() => {}}
+            />
+            <NavButton
+              title="Mood Stats"
+              icon={moodStatsIcon}
+              btnStyle={{ width: 100 }}
+              onPress={() => {}}
+            />
+          </View>
+
+          {/* Row 2 */}
+          <View style={styles.pairedButtonStyles}>
+            <NavButton
+              title="Mood Advisor"
+              icon={moodAdvisorIcon}
+              onPress={() => {}}
+              btnStyle={{ width: 100 }}
+            />
+
+            <NavButton
+              title="Settings"
+              icon={settingsIcon}
+              btnStyle={{ width: 100 }}
+              onPress={() => {
+                opacitySV.value = withTiming(0, { duration: 500 }, () => {
+                  'worklet';
+                  runOnJS(navigationToSettings)();
+                });
+              }}
+            />
+          </View>
+
+          {/* Row 3 */}
+          <View style={styles.calenderBtnStyle}>
+            <NavButton
+              title="Calendar"
+              icon={calendarIcon}
+              btnStyle={{ width: '100%' }}
+              onPress={() => {}}
+            />
+          </View>
         </View>
 
-        <View style={styles.pairedButtonStyles}>
-          <PlainAnimatedButton style={[styles.btn, { width: 100 }]}>
-            <View>
-              <Image source={moodAdvisorIcon} style={styles.btnImg} />
-              <Text style={styles.font}>Mood Advisor</Text>
-            </View>
-          </PlainAnimatedButton>
-          <PlainAnimatedButton
-            style={[styles.btn, { width: 100 }]}
-            onPress={() => {
-              opacitySV.value = withTiming(0, { duration: 500 }, () => {
-                'worklet';
-                runOnJS(navigationToSettings)();
-              });
-            }}
-          >
-            <View>
-              <Image source={settingsIcon} style={styles.btnImg} />
-              <Text style={styles.font}>Settings</Text>
-            </View>
-          </PlainAnimatedButton>
+        {/* Hearts */}
+        <View style={styles.heartContainer}>
+          <Image source={heart1} style={[styles.heartImg]} />
+          <Image source={heart3} style={[styles.heartImg]} />
+          <Image source={heart2} style={[styles.heartImg]} />
         </View>
-
-        <View style={styles.calenderBtnStyle}>
-          <PlainAnimatedButton style={[styles.btn, { width: '100%' }]}>
-            <View>
-              <Image source={calendarIcon} style={styles.btnImg} />
-              <Text style={styles.font}>Calendar</Text>
-            </View>
-          </PlainAnimatedButton>
-        </View>
-      </View>
-
-      <View style={styles.heartContainer}>
-        <Image source={heart1} style={[styles.heartImg]} />
-        <Image source={heart3} style={[styles.heartImg]} />
-        <Image source={heart2} style={[styles.heartImg]} />
-      </View>
-    </AniSafeView>
+      </AniSafeView>
     </View>
   );
 };
@@ -106,25 +126,6 @@ const styles = StyleSheet.create({
     rowGap: 20,
     backgroundColor: '#eeebe8',
   },
-  title: {
-    fontSize: 40,
-    fontFamily: 'Slims',
-    color: '#201f1f',
-    padding: 7,
-  },
-  btnImg: {
-    width: 40,
-    height: 40,
-    alignSelf: 'center',
-  },
-  btn: {
-    height: 100,
-    borderRadius: 20,
-    boxShadow: '0px 2px 3px 2px #d4d3d3',
-    alignItems: 'center',
-    justifyContent: 'center',
-    backgroundColor: '#eeeee8',
-  },
   pairedButtonStyles: {
     width: '65%',
     flexDirection: 'row',
@@ -134,10 +135,6 @@ const styles = StyleSheet.create({
     width: '65%',
     flexDirection: 'row',
   },
-  font: {
-    fontFamily: 'BiskiTrial-Regular',
-    fontSize: 13,
-  }, 
   heartImg: {
     width: 50,
     height: 50,
@@ -149,3 +146,46 @@ const styles = StyleSheet.create({
     top: 260,
   },
 });
+
+// MainPageScreen Button Component
+interface NavButtonProps extends FadedAnimationButtonProps {
+  title: string;
+  icon: ImageSourcePropType;
+  btnStyle?: StyleProp<ViewStyle>;
+  onPress: (event: GestureResponderEvent) => void;
+}
+const NavButton: React.FC<NavButtonProps> = ({
+  title,
+  icon,
+  btnStyle,
+  onPress,
+  ...props
+}) => {
+  return (
+    <FadedAnimationButton
+      style={[
+        btnStyle,
+        {
+          borderRadius: 20,
+          boxShadow: '0px 2px 3px 2px #d4d3d3',
+          alignItems: 'center',
+          justifyContent: 'center',
+          backgroundColor: '#eeeee8',
+          height: 100,
+        },
+      ]}
+      onPress={onPress}
+      {...props}
+    >
+      <View>
+        <Image
+          source={icon}
+          style={{ width: 40, height: 40, alignSelf: 'center' }}
+        />
+        <Text style={{ fontFamily: 'BiskiTrial-Regular', fontSize: 13 }}>
+          {title}
+        </Text>
+      </View>
+    </FadedAnimationButton>
+  );
+};

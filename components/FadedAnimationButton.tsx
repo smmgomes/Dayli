@@ -1,14 +1,21 @@
 import React from 'react';
-import { Pressable, PressableProps } from 'react-native';
+import { Pressable, PressableProps, StyleProp, ViewStyle } from 'react-native';
 import Animated, {
-    useAnimatedStyle,
-    useSharedValue,
-    withTiming,
+  useAnimatedStyle,
+  useSharedValue,
+  withTiming,
 } from 'react-native-reanimated';
 
 const AnimatedPressable = Animated.createAnimatedComponent(Pressable);
 
-export const PlainAnimatedButton: React.FC<PressableProps> = ({ style, ...props }) => {
+export interface FadedAnimationButtonProps extends PressableProps {
+  style?: StyleProp<ViewStyle>
+}
+
+export const FadedAnimationButton: React.FC<FadedAnimationButtonProps> = ({
+  style,
+  ...props
+}) => {
   const opacitySV = useSharedValue(1);
   const opacityAnimationObject = useAnimatedStyle(() => {
     return {

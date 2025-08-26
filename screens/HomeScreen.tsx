@@ -8,7 +8,8 @@ import Animated, {
   withTiming,
 } from 'react-native-reanimated';
 import { ParameterList } from '../App';
-import { CustomButton } from '../components/CustomButton';
+import { PrimaryButton } from '../components/PrimaryButton';
+import { ScreenHeader } from '../components/ScreenHeader';
 
 type HomeScreenProps = NativeStackScreenProps<ParameterList, 'Home'>;
 // This tells TypeScript what props the Home screen gets from React Navigation
@@ -33,9 +34,9 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({ navigation }) => {
   return (
     <View style={{ flex: 1, backgroundColor: '#eeebe8' }}>
       <AniSafeView style={[opacityAnimationObject, styles.container]}>
-        <Text style={styles.welcomeText}>Welcome to Dayli</Text>
+        <ScreenHeader title='Welcome to Dayli'/>
         <Image source={logoImg} style={styles.logoImg} />
-        <CustomButton
+        <PrimaryButton
           onPress={() => {
             opacitySV.value = withTiming(0, { duration: 500 }, () => {
               'worklet';
@@ -50,7 +51,7 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({ navigation }) => {
               <Image source={arrowImg} style={styles.arrowImg} />
             </View>
           </View>
-        </CustomButton>
+        </PrimaryButton>
       </AniSafeView>
     </View>
   );

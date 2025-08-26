@@ -9,7 +9,8 @@ import Animated, {
   withTiming,
 } from 'react-native-reanimated';
 import { ParameterList } from '../App';
-import { CustomButton } from '../components/CustomButton';
+import { PrimaryButton } from '../components/PrimaryButton';
+import { ScreenHeader } from '../components/ScreenHeader';
 import { TextButtonAnimation } from '../components/TextButtonAnimation';
 
 type LogInScreenProp = NativeStackScreenProps<ParameterList, 'LogIn'>;
@@ -40,7 +41,7 @@ export const LogInScreen: React.FC<LogInScreenProp> = ({ navigation }) => {
   return (
     <View style={{ flex: 1, backgroundColor: '#eeebe8' }}>
     <AniSafeView style={[opacityAnimationObject, styles.container]}>
-      <Text style={styles.title}>Log In</Text>
+      <ScreenHeader title='Log in'/>
       <TextInput
         placeholder="Email"
         style={styles.inputBox}
@@ -83,7 +84,7 @@ export const LogInScreen: React.FC<LogInScreenProp> = ({ navigation }) => {
         }}
         title='Sign up instead'
       ></TextButtonAnimation>
-      <CustomButton
+      <PrimaryButton
         style={styles.btn}
         onPress={() => {
           opacitySV.value = withTiming(0, { duration: 500 }, () => {
@@ -93,7 +94,7 @@ export const LogInScreen: React.FC<LogInScreenProp> = ({ navigation }) => {
         }}
       >
         <Text style={styles.btnText}>Done</Text>
-      </CustomButton>
+      </PrimaryButton>
     </AniSafeView>
     </View>
   );
@@ -111,12 +112,6 @@ const styles = StyleSheet.create({
   inputBox: {
     width: 250,
     backgroundColor: '#eeeee8',
-  },
-  title: {
-    fontSize: 40,
-    fontFamily: 'Slims',
-    color: '#201f1f',
-    padding: 7,
   },
   btn: {
     width: 80,

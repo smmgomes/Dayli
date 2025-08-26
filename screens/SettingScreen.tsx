@@ -19,7 +19,8 @@ import Animated, {
   withTiming,
 } from 'react-native-reanimated';
 import { ParameterList } from '../App';
-import { PlainAnimatedButton } from '../components/PlainAnimatedButton';
+import { FadedAnimationButton } from '../components/FadedAnimationButton';
+import { ScreenHeader } from '../components/ScreenHeader';
 import { TextButtonAnimation } from '../components/TextButtonAnimation';
 import { captialize } from '../library/helpers';
 
@@ -38,16 +39,16 @@ const greyArrowIcon = require('../assets/images/right-arrow-grey.png');
 export const SettingsScreen: React.FC<SettingsScreenProps> = ({
   navigation,
 }) => {
-  // states 
+  // states
   const [isNotificationEnabled, setIsNotificationEnabled] = useState(true);
   const [isTimePickerVisible, setTimePickerVisibility] = useState(false);
   const [selectedTime, setSelectedTime] = useState(new Date(2025, 7, 9, 13, 0));
-  const [userThemeChoice, setUserThemeChoice] = useState<{name: string, value: 'light' | 'dark'}>(
-    {name: 'system', value: Appearance.getColorScheme() ?? 'light'}
-  ); //set up global variable after
-  
+  const [userThemeChoice, setUserThemeChoice] = useState<{
+    name: string;
+    value: 'light' | 'dark';
+  }>({ name: 'system', value: Appearance.getColorScheme() ?? 'light' }); //set up global variable after
 
-  //animation 
+  //animation
   const opacitySV = useSharedValue(1);
   const opacityAnimationObject = useAnimatedStyle(() => {
     return {
@@ -99,7 +100,7 @@ export const SettingsScreen: React.FC<SettingsScreenProps> = ({
     ]);
   };
 
-  //logging out 
+  //logging out
   const createLogOutAlert = () => {
     Alert.alert('Log out?', undefined, [
       { text: 'Cancel', style: 'cancel' },
@@ -117,7 +118,8 @@ export const SettingsScreen: React.FC<SettingsScreenProps> = ({
   return (
     <View style={{ flex: 1, backgroundColor: '#eeeee8' }}>
       <AniSafeView style={[opacityAnimationObject, styles.container]}>
-        <PlainAnimatedButton
+        {/* BackButton Section */}
+        <FadedAnimationButton
           style={styles.goBackBtnStyles}
           onPress={() => {
             opacitySV.value = withTiming(0, { duration: 500 }, () => {
@@ -127,10 +129,12 @@ export const SettingsScreen: React.FC<SettingsScreenProps> = ({
           }}
         >
           <Image source={btnGoBack} style={styles.goBackBtnImgStyles} />
-        </PlainAnimatedButton>
+        </FadedAnimationButton>
 
-        <Text style={styles.title}>Settings</Text>
+        {/* Title */}
+        <ScreenHeader title='Settings'/>
 
+        {/* Theme Selection Section */}
         <View style={[styles.subSectionView, styles.subSectionMargins]}>
           <View style={styles.switchTextIconStyles}>
             <Image source={thmClrIcon} style={styles.iconStyles} />
@@ -140,9 +144,12 @@ export const SettingsScreen: React.FC<SettingsScreenProps> = ({
             title="Select Theme"
             onPressAction={({ nativeEvent }) => {
               if (nativeEvent.event === 'system') {
-                setUserThemeChoice({name: 'system', value: Appearance.getColorScheme() ?? 'light'});
+                setUserThemeChoice({
+                  name: 'system',
+                  value: Appearance.getColorScheme() ?? 'light',
+                });
               } else if (nativeEvent.event === 'light') {
-                setUserThemeChoice({name: 'light', value: 'light'});
+                setUserThemeChoice({ name: 'light', value: 'light' });
               } else {
                 setUserThemeChoice({ name: 'dark', value: 'dark' });
               }
@@ -166,7 +173,7 @@ export const SettingsScreen: React.FC<SettingsScreenProps> = ({
             ]}
             themeVariant={userThemeChoice.value}
           >
-            <PlainAnimatedButton
+            <FadedAnimationButton
               onPress={() => {}}
               style={styles.pickerPressableStyle}
             >
@@ -174,10 +181,11 @@ export const SettingsScreen: React.FC<SettingsScreenProps> = ({
                 {captialize(userThemeChoice.name)}
               </Text>
               <Image source={arrowUpDown} style={styles.upDownArrowIcon} />
-            </PlainAnimatedButton>
+            </FadedAnimationButton>
           </MenuView>
         </View>
 
+        {/* Notification Toggle + Setting Time Section */}
         <View style={[styles.subSectionView, styles.subSectionMargins]}>
           <View style={styles.switchTextIconStyles}>
             <Image source={bellImg} style={styles.iconStyles} />
@@ -194,7 +202,7 @@ export const SettingsScreen: React.FC<SettingsScreenProps> = ({
 
         <View style={styles.timePickerViewStyles}>
           <Text style={styles.accountSubHeadingTextStyles}>Time</Text>
-          <PlainAnimatedButton
+          <FadedAnimationButton
             onPress={showTimePicker}
             style={styles.pickerPressableStyle}
           >
@@ -202,7 +210,7 @@ export const SettingsScreen: React.FC<SettingsScreenProps> = ({
               {formatTime(selectedTime)}
             </Text>
             <Image source={arrowUpDown} style={styles.upDownArrowIcon} />
-          </PlainAnimatedButton>
+          </FadedAnimationButton>
 
           <DateTimePickerModal
             isVisible={isTimePickerVisible}
@@ -212,11 +220,12 @@ export const SettingsScreen: React.FC<SettingsScreenProps> = ({
             onCancel={hideTimePicker}
             display="spinner"
             is24Hour={false}
-            accentColor='blue'
+            accentColor="blue"
             themeVariant={userThemeChoice.value}
           />
         </View>
 
+        {/* Account  Section */}
         <View style={[styles.subSectionView, styles.subSectionMargins]}>
           <View style={styles.switchTextIconStyles}>
             <Image source={userImg} style={styles.iconStyles} />
@@ -226,43 +235,45 @@ export const SettingsScreen: React.FC<SettingsScreenProps> = ({
 
         <View style={styles.accountSubHeadingStyles}>
           <Text style={styles.accountSubHeadingTextStyles}>Edit Name</Text>
-          <PlainAnimatedButton style={styles.accountSubHeadingPressableStyles}>
+          <FadedAnimationButton style={styles.accountSubHeadingPressableStyles}>
             <Image source={greyArrowIcon} style={styles.upDownArrowIcon} />
-          </PlainAnimatedButton>
+          </FadedAnimationButton>
         </View>
 
         <View style={styles.accountSubHeadingStyles}>
           <Text style={styles.accountSubHeadingTextStyles}>
             Change Password
           </Text>
-          <PlainAnimatedButton style={styles.accountSubHeadingPressableStyles}>
+          <FadedAnimationButton style={styles.accountSubHeadingPressableStyles}>
             <Image source={greyArrowIcon} style={styles.upDownArrowIcon} />
-          </PlainAnimatedButton>
+          </FadedAnimationButton>
         </View>
 
         <View style={styles.accountSubHeadingStyles}>
           <Text style={styles.accountSubHeadingTextStyles}>Delete Account</Text>
-          <PlainAnimatedButton
+          <FadedAnimationButton
             style={styles.accountSubHeadingPressableStyles}
             onPress={createDeleteAccountAlert}
           >
             <Image source={greyArrowIcon} style={styles.upDownArrowIcon} />
-          </PlainAnimatedButton>
+          </FadedAnimationButton>
         </View>
 
+        {/* Contacting Support Section */}
         <View style={[styles.subSectionView, styles.subSectionMargins]}>
           <View style={styles.switchTextIconStyles}>
             <Image source={supportImg} style={styles.iconStyles} />
             <Text style={styles.subSectionFont}>Contact Support</Text>
           </View>
-          <PlainAnimatedButton
+          <FadedAnimationButton
             style={styles.accountSubHeadingPressableStyles}
             onPress={createSupportAlert}
           >
             <Image source={greyArrowIcon} style={styles.upDownArrowIcon} />
-          </PlainAnimatedButton>
+          </FadedAnimationButton>
         </View>
 
+        {/* Log Out Section */}
         <View style={[styles.subSectionMargins, { width: '73%' }]}>
           <TextButtonAnimation
             style={{
@@ -275,6 +286,7 @@ export const SettingsScreen: React.FC<SettingsScreenProps> = ({
           ></TextButtonAnimation>
         </View>
 
+        {/* Footer */}
         <Text
           style={{
             bottom: 0,
@@ -301,13 +313,6 @@ const styles = StyleSheet.create({
     flexDirection: 'column',
     rowGap: 20,
     fontFamily: 'BiskiTrial-Regular',
-  },
-  title: {
-    fontSize: 40,
-    fontFamily: 'Slims',
-    color: '#201f1f',
-    padding: 7,
-    marginTop: -20,
   },
   iconStyles: {
     width: 17.5,

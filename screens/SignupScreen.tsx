@@ -10,7 +10,8 @@ import Animated, {
   withTiming,
 } from 'react-native-reanimated';
 import { ParameterList } from '../App';
-import { CustomButton } from '../components/CustomButton';
+import { PrimaryButton } from '../components/PrimaryButton';
+import { ScreenHeader } from '../components/ScreenHeader';
 import { TextButtonAnimation } from '../components/TextButtonAnimation';
 
 type SignupScreenProps = NativeStackScreenProps<ParameterList, 'SignUp'>;
@@ -49,7 +50,7 @@ export const SignupScreen: React.FC<SignupScreenProps> = ({ navigation }) => {
   return (
     <View style={{ flex: 1, backgroundColor: '#eeebe8' }}>
       <AniSafeView style={[opacityAnimationObject, styles.container]}>
-        <Text style={styles.title}>Sign Up</Text>
+        <ScreenHeader title='Sign Up'/>
         <View style={styles.form}>
           <TextInput
             placeholder="Name"
@@ -106,7 +107,7 @@ export const SignupScreen: React.FC<SignupScreenProps> = ({ navigation }) => {
             title="Log in instead"
           ></TextButtonAnimation>
 
-          <CustomButton
+          <PrimaryButton
             style={styles.btn}
             onPress={() => {
               opacitySV.value = withTiming(0, { duration: 500 }, () => {
@@ -116,7 +117,7 @@ export const SignupScreen: React.FC<SignupScreenProps> = ({ navigation }) => {
             }}
           >
             <Text style={styles.btnText}>Done</Text>
-          </CustomButton>
+          </PrimaryButton>
         </View>
       </AniSafeView>
     </View>
